@@ -188,6 +188,40 @@ def thumb_sheet(results: list[dict], out: Path, limit: int = 24) -> None:
     sheet.save(out, quality=85)
 
 
+def write_report(results: list[dict], report_dir: Path, wall: float, workers: int, rerun_note: str = "") -> bool:
+    results.sort(key=lambda r: r["case"]["idx"])
+    (report_dir / "results.json").write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
+    contact_sheet(results, report_dir / "frames.jpg")
+    thumb_sheet(results, report_dir / "thumbnails.jpg")
+
+    ok = [r for r in results if r["ok"]]
+    total_video = sum(r.get("duration", 0) for r in results)
+    lufs = [r["lufs"] for r in results if r.get("lufs") is not None]
+    by = lambda key: {k: sum(1 for r in results if r["case"][key] == k) for k in
+                      sorted({r["case"][key] for r in results})}
+    lines = [
+        "# Stress test report", "",
+        f"- Videos rendered: **{len(results)}**, passed QA: **{len(ok)}**, failed: **{len(results) - len(ok)}**",
+        f"- Total video length: {total_video / 60:.1f} min; full run wall time {wall / 60:.1f} min with {workers} "
+        f"workers on {os.cpu_count()} CPU cores",
+        *([f"- {rerun_note}"] if rerun_note else []),
+        f"- Loudness: min {min(lufs):.1f} / max {max(lufs):.1f} LUFS (target -14)" if lufs else "- Loudness: n/a",
+        f"- Formats: {by('format')}", f"- Languages: {by('language')}", f"- Niches: {by('niche')}",
+        f"- Caption styles: {by('caption_style')}", f"- Art styles: {by('art_style')}", f"- Voices: {by('voice')}",
+        "", "| # | niche | format | lang | captions | requested | actual | scenes | LUFS | MB | result |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
+    ]
+    for r in results:
+        c = r["case"]
+        lines.append(f"| {c['idx']} | {c['niche']} | {c['format']} | {c['language']} | {c['caption_style']} | "
+                     f"{c['duration'] or 'default'} | {r.get('duration', 0):.1f}s | {r.get('scenes', '-')} | "
+                     f"{r.get('lufs', '-')} | {r.get('size_mb', '-')} | "
+                     f"{'✅' if r['ok'] else '❌ ' + '; '.join(r['issues'])[:120].replace('|', '/')} |")
+    (report_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"\n{len(ok)}/{len(results)} passed. Report: {report_dir / 'report.md'}")
+    return len(ok) == len(results)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--count", type=int, default=110)
@@ -219,36 +253,19 @@ def main() -> int:
             print(f"[{len(results):3d}/{len(cases)}] {status} #{c['idx']:03d} {c['niche']:<15} {c['format']:<5} "
                   f"{r.get('duration', 0):6.1f}s {r['seconds']:6.1f}s render  {'; '.join(r['issues'])[:160]}",
                   flush=True)
-    results.sort(key=lambda r: r["case"]["idx"])
     wall = time.time() - t0
-    (report_dir / "results.json").write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
-    contact_sheet(results, report_dir / "frames.jpg")
-    thumb_sheet(results, report_dir / "thumbnails.jpg")
-
-    ok = [r for r in results if r["ok"]]
-    total_video = sum(r.get("duration", 0) for r in results)
-    lufs = [r["lufs"] for r in results if r.get("lufs") is not None]
-    by = lambda key: {k: sum(1 for r in results if r["case"][key] == k) for k in
-                      sorted({r["case"][key] for r in results})}
-    lines = [
-        "# Stress test report", "",
-        f"- Videos rendered: **{len(results)}**, passed QA: **{len(ok)}**, failed: **{len(results) - len(ok)}**",
-        f"- Total video length: {total_video / 60:.1f} min; wall time {wall / 60:.1f} min with {args.workers} workers",
-        f"- Loudness: min {min(lufs):.1f} / max {max(lufs):.1f} LUFS (target -14)" if lufs else "- Loudness: n/a",
-        f"- Formats: {by('format')}", f"- Languages: {by('language')}", f"- Niches: {by('niche')}",
-        f"- Caption styles: {by('caption_style')}", f"- Art styles: {by('art_style')}", f"- Voices: {by('voice')}",
-        "", "| # | niche | format | lang | captions | requested | actual | scenes | LUFS | MB | result |",
-        "|---|---|---|---|---|---|---|---|---|---|---|",
-    ]
-    for r in results:
-        c = r["case"]
-        lines.append(f"| {c['idx']} | {c['niche']} | {c['format']} | {c['language']} | {c['caption_style']} | "
-                     f"{c['duration'] or 'default'} | {r.get('duration', 0):.1f}s | {r.get('scenes', '-')} | "
-                     f"{r.get('lufs', '-')} | {r.get('size_mb', '-')} | "
-                     f"{'✅' if r['ok'] else '❌ ' + '; '.join(r['issues'])[:120].replace('|', '/')} |")
-    (report_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"\n{len(ok)}/{len(results)} passed. Report: {report_dir / 'report.md'}")
-    return 0 if len(ok) == len(results) else 1
+    prev = report_dir / "results.json"
+    info = report_dir / "run_info.json"
+    note = ""
+    if args.only and prev.exists():  # merge re-run cases into the previous full report
+        old = json.loads(prev.read_text(encoding="utf-8"))
+        rerun = {r["case"]["idx"] for r in results}
+        note = f"Re-run after fixes: cases {sorted(rerun)}"
+        results = [r for r in old if r["case"]["idx"] not in rerun] + results
+        wall = json.loads(info.read_text())["wall"] if info.exists() else wall
+    else:
+        info.write_text(json.dumps({"wall": wall, "workers": args.workers}))
+    return 0 if write_report(results, report_dir, wall, args.workers, note) else 1
 
 
 if __name__ == "__main__":
