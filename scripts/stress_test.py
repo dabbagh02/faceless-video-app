@@ -123,7 +123,9 @@ def run_case(case: dict, out_root: str) -> dict:
         if case["duration"] and fmt.vertical:
             if r.duration > fmt.max_seconds + 0.05:
                 issues.append(f"short too long: {r.duration}")
-        if case["duration"] and abs(r.duration - case["duration"]) > max(12, case["duration"] * 0.35):
+        # a custom script is read verbatim, so its length (not the requested duration) decides
+        if case["duration"] and not case["custom_script"] and \
+                abs(r.duration - case["duration"]) > max(12, case["duration"] * 0.35):
             issues.append(f"duration {r.duration:.0f}s far from requested {case['duration']}s")
         if not meta["title"] or not meta["description"] or not meta["tags"]:
             issues.append("missing metadata")
@@ -193,6 +195,7 @@ def main() -> int:
     ap.add_argument("--out", default="stress-output")
     ap.add_argument("--report", default="test-results")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--only", default="", help="comma-separated case indexes to (re)run")
     args = ap.parse_args()
 
     out_root = Path(args.out).resolve()
@@ -200,6 +203,9 @@ def main() -> int:
     report_dir = Path(args.report)
     report_dir.mkdir(parents=True, exist_ok=True)
     cases = build_matrix(args.count, args.seed)
+    if args.only:
+        keep = {int(x) for x in args.only.split(",")}
+        cases = [c for c in cases if c["idx"] in keep]
     print(f"Rendering {len(cases)} videos with {args.workers} workers -> {out_root}", flush=True)
     t0 = time.time()
     results = []
