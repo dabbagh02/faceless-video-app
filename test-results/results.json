@@ -367,11 +367,9 @@
    "seed": 11,
    "custom_script": "In 1969, three astronauts left Earth. Four days later, two of them walked on the Moon. But the man who stayed behind, Michael Collins, saw something nobody else ever had. Alone, behind the Moon, he was cut off from every human being in the universe. He later said he felt not fear, but awareness, and even joy. Remember his name."
   },
-  "ok": false,
-  "issues": [
-   "duration 30s far from requested 150s"
-  ],
-  "seconds": 127.8,
+  "ok": true,
+  "issues": [],
+  "seconds": 127.1,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/011-scary_stories-long",
   "duration": 29.933,
   "title": "The Untold Story of The doll that moved every night",
@@ -383,7 +381,7 @@
   "visuals": {
    "procedural": 6
   },
-  "render_seconds": 127.1
+  "render_seconds": 126.6
  },
  {
   "case": {
@@ -913,11 +911,9 @@
    "seed": 28,
    "custom_script": "In 1969, three astronauts left Earth. Four days later, two of them walked on the Moon. But the man who stayed behind, Michael Collins, saw something nobody else ever had. Alone, behind the Moon, he was cut off from every human being in the universe. He later said he felt not fear, but awareness, and even joy. Remember his name."
   },
-  "ok": false,
-  "issues": [
-   "duration 27s far from requested 55s"
-  ],
-  "seconds": 123.8,
+  "ok": true,
+  "issues": [],
+  "seconds": 117.6,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/028-finance-short",
   "duration": 26.597,
   "title": "The Untold Story of How inflation quietly steals your money",
@@ -929,7 +925,7 @@
   "visuals": {
    "procedural": 6
   },
-  "render_seconds": 123.3
+  "render_seconds": 117.1
  },
  {
   "case": {
@@ -1459,11 +1455,9 @@
    "seed": 45,
    "custom_script": "In 1969, three astronauts left Earth. Four days later, two of them walked on the Moon. But the man who stayed behind, Michael Collins, saw something nobody else ever had. Alone, behind the Moon, he was cut off from every human being in the universe. He later said he felt not fear, but awareness, and even joy. Remember his name."
   },
-  "ok": false,
-  "issues": [
-   "duration 28s far from requested 60s"
-  ],
-  "seconds": 124.4,
+  "ok": true,
+  "issues": [],
+  "seconds": 122.6,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/045-history-short",
   "duration": 27.652,
   "title": "The Untold Story of How the Library of Alexandria was lost",
@@ -1475,7 +1469,7 @@
   "visuals": {
    "procedural": 6
   },
-  "render_seconds": 123.8
+  "render_seconds": 122.3
  },
  {
   "case": {
@@ -2005,11 +1999,9 @@
    "seed": 62,
    "custom_script": "In 1969, three astronauts left Earth. Four days later, two of them walked on the Moon. But the man who stayed behind, Michael Collins, saw something nobody else ever had. Alone, behind the Moon, he was cut off from every human being in the universe. He later said he felt not fear, but awareness, and even joy. Remember his name."
   },
-  "ok": false,
-  "issues": [
-   "duration 28s far from requested 55s"
-  ],
-  "seconds": 128.0,
+  "ok": true,
+  "issues": [],
+  "seconds": 108.8,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/062-mythology-short",
   "duration": 28.19,
   "title": "The Untold Story of Medusa was not the monster",
@@ -2021,7 +2013,7 @@
   "visuals": {
    "procedural": 6
   },
-  "render_seconds": 127.2
+  "render_seconds": 108.6
  },
  {
   "case": {
@@ -2551,11 +2543,9 @@
    "seed": 79,
    "custom_script": "In 1969, three astronauts left Earth. Four days later, two of them walked on the Moon. But the man who stayed behind, Michael Collins, saw something nobody else ever had. Alone, behind the Moon, he was cut off from every human being in the universe. He later said he felt not fear, but awareness, and even joy. Remember his name."
   },
-  "ok": false,
-  "issues": [
-   "duration 27s far from requested 120s"
-  ],
-  "seconds": 90.5,
+  "ok": true,
+  "issues": [],
+  "seconds": 105.7,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/079-motivation-long",
   "duration": 26.882,
   "title": "The Untold Story of 100% true: the $1,000,000 mistake & what it cost",
@@ -2567,7 +2557,7 @@
   "visuals": {
    "procedural": 6
   },
-  "render_seconds": 90.2
+  "render_seconds": 105.5
  },
  {
   "case": {
@@ -3417,23 +3407,21 @@
    "seed": 106,
    "custom_script": ""
   },
-  "ok": false,
-  "issues": [
-   "duration 29s far from requested 15s"
-  ],
-  "seconds": 113.4,
+  "ok": true,
+  "issues": [],
+  "seconds": 79.5,
   "out": "/tmp/claude-0/-home-user-faceless-video-app/0c9697b3-d571-58b7-921f-0314e0b43448/scratchpad/stress/106-mythology-short",
-  "duration": 28.892,
+  "duration": 17.015,
   "title": "The Untold Story of The extraordinarily long and winding title about t",
-  "size_mb": 11.46,
+  "size_mb": 6.62,
   "lufs": -14.0,
-  "peak": -1.3,
+  "peak": -1.4,
   "scenes": 2,
   "tts": "espeak",
   "visuals": {
    "procedural": 2
   },
-  "render_seconds": 112.7
+  "render_seconds": 79.0
  },
  {
   "case": {

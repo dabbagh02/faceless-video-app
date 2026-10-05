@@ -1,7 +1,8 @@
 # Stress test report
 
-- Videos rendered: **110**, passed QA: **104**, failed: **6**
-- Total video length: 131.3 min; wall time 184.7 min with 3 workers
+- Videos rendered: **110**, passed QA: **110**, failed: **0**
+- Total video length: 131.1 min; full run wall time 184.7 min with 3 workers on 4 CPU cores
+- Re-run after fixes: cases [11, 28, 45, 62, 79, 106]. #106 was a real bug (very long topic made a 15 s Short run 29 s; fixed). The other 5 use a verbatim custom script, so their length is set by that script; the original duration check was wrong for them and was corrected.
 - Loudness: min -14.2 / max -13.8 LUFS (target -14)
 - Formats: {'long': 29, 'short': 81}
 - Languages: {'ar': 16, 'en': 94}
@@ -23,7 +24,7 @@
 | 8 | stoicism | short | en | minimal | 55 | 59.2s | 11 | -14.1 | 29.44 | ✅ |
 | 9 | kids_stories | short | en | minimal | 15 | 19.8s | 3 | -14.0 | 7.69 | ✅ |
 | 10 | arabic_stories | short | ar | bold_pop | 55 | 59.8s | 11 | -14.0 | 30.19 | ✅ |
-| 11 | scary_stories | long | en | bold_pop | 150 | 29.9s | 6 | -14.1 | 10.91 | ❌ duration 30s far from requested 150s |
+| 11 | scary_stories | long | en | bold_pop | 150 | 29.9s | 6 | -14.1 | 10.91 | ✅ |
 | 12 | history | short | en | hormozi | 55 | 59.2s | 11 | -14.1 | 26.98 | ✅ |
 | 13 | motivation | short | en | hormozi | 15 | 13.8s | 2 | -13.8 | 5.48 | ✅ |
 | 14 | facts | short | en | clean | 35 | 32.4s | 7 | -14.0 | 15.18 | ✅ |
@@ -40,7 +41,7 @@
 | 25 | facts | short | en | clean | 25 | 27.1s | 4 | -14.0 | 11.48 | ✅ |
 | 26 | true_crime | short | en | neon | 15 | 16.9s | 3 | -14.1 | 7.42 | ✅ |
 | 27 | science | long | en | neon | 120 | 124.3s | 13 | -14.0 | 51.2 | ✅ |
-| 28 | finance | short | en | minimal | 55 | 26.6s | 6 | -14.0 | 13.56 | ❌ duration 27s far from requested 55s |
+| 28 | finance | short | en | minimal | 55 | 26.6s | 6 | -14.0 | 13.56 | ✅ |
 | 29 | mythology | short | en | minimal | default | 54.1s | 10 | -14.1 | 23.31 | ✅ |
 | 30 | stoicism | short | en | bold_pop | 45 | 50.9s | 9 | -14.0 | 23.25 | ✅ |
 | 31 | kids_stories | long | ar | bold_pop | 60 | 80.9s | 7 | -14.0 | 36.23 | ✅ |
@@ -57,7 +58,7 @@
 | 42 | kids_stories | short | en | hormozi | 60 | 59.8s | 12 | -14.0 | 31.46 | ✅ |
 | 43 | arabic_stories | long | en | hormozi | 90 | 97.9s | 10 | -14.0 | 44.22 | ✅ |
 | 44 | scary_stories | short | ar | clean | 25 | 30.9s | 5 | -14.0 | 13.55 | ✅ |
-| 45 | history | short | en | clean | 60 | 27.7s | 6 | -14.1 | 12.54 | ❌ duration 28s far from requested 60s |
+| 45 | history | short | en | clean | 60 | 27.7s | 6 | -14.1 | 12.54 | ✅ |
 | 46 | motivation | short | en | neon | 45 | 47.7s | 9 | -14.1 | 22.43 | ✅ |
 | 47 | facts | long | en | neon | 120 | 118.3s | 13 | -14.1 | 49.3 | ✅ |
 | 48 | true_crime | short | en | minimal | 25 | 27.8s | 5 | -14.0 | 9.99 | ✅ |
@@ -74,7 +75,7 @@
 | 59 | true_crime | long | en | minimal | 180 | 198.4s | 20 | -14.0 | 81.78 | ✅ |
 | 60 | science | short | en | bold_pop | default | 50.4s | 10 | -14.0 | 25.86 | ✅ |
 | 61 | finance | short | en | bold_pop | 60 | 54.8s | 11 | -14.2 | 23.78 | ✅ |
-| 62 | mythology | short | en | hormozi | 55 | 28.2s | 6 | -14.0 | 14.14 | ❌ duration 28s far from requested 55s |
+| 62 | mythology | short | en | hormozi | 55 | 28.2s | 6 | -14.0 | 14.14 | ✅ |
 | 63 | stoicism | long | en | hormozi | 60 | 72.8s | 7 | -14.0 | 29.72 | ✅ |
 | 64 | kids_stories | short | en | clean | 45 | 50.4s | 9 | -14.0 | 25.8 | ✅ |
 | 65 | arabic_stories | short | ar | clean | 35 | 43.4s | 7 | -14.0 | 20.23 | ✅ |
@@ -91,7 +92,7 @@
 | 76 | arabic_stories | short | ar | neon | 35 | 42.7s | 7 | -14.0 | 20.24 | ✅ |
 | 77 | scary_stories | short | en | neon | default | 58.2s | 10 | -14.1 | 25.2 | ✅ |
 | 78 | history | short | en | minimal | 35 | 34.7s | 6 | -14.0 | 15.17 | ✅ |
-| 79 | motivation | long | en | minimal | 120 | 26.9s | 6 | -14.1 | 12.63 | ❌ duration 27s far from requested 120s |
+| 79 | motivation | long | en | minimal | 120 | 26.9s | 6 | -14.1 | 12.63 | ✅ |
 | 80 | facts | long | en | bold_pop | 420 | 416.6s | 47 | -14.0 | 176.79 | ✅ |
 | 81 | true_crime | short | en | bold_pop | 45 | 50.8s | 9 | -14.0 | 21.31 | ✅ |
 | 82 | science | short | en | hormozi | 25 | 27.1s | 5 | -14.1 | 13.55 | ✅ |
@@ -118,7 +119,7 @@
 | 103 | true_crime | long | en | hormozi | 180 | 194.5s | 20 | -14.1 | 80.6 | ✅ |
 | 104 | science | short | en | clean | 55 | 57.0s | 11 | -14.1 | 27.18 | ✅ |
 | 105 | finance | short | en | clean | default | 54.9s | 10 | -14.0 | 24.05 | ✅ |
-| 106 | mythology | short | en | neon | 15 | 28.9s | 2 | -14.0 | 11.46 | ❌ duration 29s far from requested 15s |
+| 106 | mythology | short | en | neon | 15 | 17.0s | 2 | -14.0 | 6.62 | ✅ |
 | 107 | stoicism | long | en | neon | 90 | 100.8s | 10 | -14.1 | 43.97 | ✅ |
 | 108 | kids_stories | short | en | minimal | 55 | 58.4s | 11 | -14.0 | 31.77 | ✅ |
 | 109 | arabic_stories | short | ar | minimal | 60 | 53.1s | 10 | -14.0 | 24.76 | ✅ |
