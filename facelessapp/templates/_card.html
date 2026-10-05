@@ -1,0 +1,8 @@
+<a class="vcard" href="{{ url_for('video_page', item_id=v.id) }}">
+  <img loading="lazy" src="{{ url_for('files', item_id=v.id, name='thumbnail.jpg') }}" alt="">
+  <div class="vmeta">
+    <strong dir="auto">{{ v.title }}</strong>
+    <span class="muted">{{ v.format }} · {{ '%d:%02d' % (v.duration // 60, v.duration % 60) }} · {{ v.niche }}</span>
+    {% if v.qa %}<span class="chip {{ 'ok' if v.qa.ok else 'warn' }}">{{ 'QA passed' if v.qa.ok else 'QA: ' ~ v.qa.issues|length ~ ' issue(s)' }}</span>{% endif %}
+  </div>
+</a>

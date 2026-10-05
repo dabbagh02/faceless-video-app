@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} – Faceless Studio{% endblock %}
+{% block body %}
+<div class="detail {{ 'vertical' if item.format == 'short' }}">
+  <div class="player">
+    <video controls preload="metadata" {% if item.format != 'short' %}poster="{{ url_for('files', item_id=item.id, name='thumbnail.jpg') }}"{% endif %}
+           src="{{ url_for('files', item_id=item.id, name='video.mp4') }}"></video>
+    <div class="row wrap">
+      <a class="btn primary" href="{{ url_for('files', item_id=item.id, name='video.mp4', download=1) }}">⬇ Video (MP4)</a>
+      <a class="btn" href="{{ url_for('files', item_id=item.id, name='thumbnail.jpg', download=1) }}">Thumbnail</a>
+      <a class="btn" href="{{ url_for('files', item_id=item.id, name='captions.srt', download=1) }}">Subtitles (SRT)</a>
+      <a class="btn" href="{{ url_for('files', item_id=item.id, name='description.txt', download=1) }}">Description</a>
+    </div>
+  </div>
+  <div class="info">
+    <label>Title <button class="copy" data-copy="title">Copy</button></label>
+    <div class="box" id="title" dir="auto">{{ item.title }}</div>
+    <label>Description <button class="copy" data-copy="desc">Copy</button></label>
+    <pre class="box" id="desc" dir="auto">{{ item.description }}</pre>
+    <label>Tags <button class="copy" data-copy="tags">Copy</button></label>
+    <div class="box" id="tags" dir="auto">{{ item.tags|join(', ') }}</div>
+    <img class="thumb" src="{{ url_for('files', item_id=item.id, name='thumbnail.jpg') }}" alt="thumbnail">
+    <table class="kv">
+      <tr><td>Duration</td><td>{{ '%d:%02d' % (item.duration // 60, item.duration % 60) }} ({{ item.resolution }})</td></tr>
+      <tr><td>Script</td><td>{{ item.script_engine }}</td></tr>
+      <tr><td>Voice</td><td>{{ item.voice }} via {{ item.tts_engine }}</td></tr>
+      <tr><td>Visuals</td><td>{% for k, v in item.visual_sources.items() %}{{ k }} ×{{ v }} {% endfor %}</td></tr>
+      <tr><td>Music</td><td>{{ item.music }}</td></tr>
+      {% if item.qa %}<tr><td>QA</td><td>{{ 'passed' if item.qa.ok else item.qa.issues|join('; ') }} · {{ item.qa.integrated_lufs }} LUFS · {{ item.qa.size_mb }} MB</td></tr>{% endif %}
+      <tr><td>Render time</td><td>{{ item.render_seconds }} s</td></tr>
+    </table>
+    {% if item.script %}
+    <details><summary>Script ({{ item.script.scenes|length }} scenes)</summary>
+      <ol class="script">{% for s in item.script.scenes %}<li dir="auto">{{ s.narration }}<br><small class="muted">🎨 {{ s.image_prompt }}</small></li>{% endfor %}</ol>
+    </details>
+    {% endif %}
+    <form method="post" action="{{ url_for('delete_video', item_id=item.id) }}" onsubmit="return confirm('Delete this video?')">
+      <button class="danger">Delete</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('.copy').forEach(b => b.onclick = () => {
+  navigator.clipboard.writeText(document.getElementById(b.dataset.copy).innerText);
+  b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200);
+});
+</script>
+{% endblock %}

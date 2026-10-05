@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Library – Faceless Studio{% endblock %}
+{% block body %}
+<h1>Library <span class="muted">({{ items|length }})</span></h1>
+{% if not items %}<p class="muted">Nothing rendered yet.</p>{% endif %}
+<div class="cards">
+  {% for v in items %}{% include "_card.html" %}{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="hero">
+  <h1>Create a video</h1>
+  <p class="muted">Topic → Claude script → voice-over → visuals → captions → YouTube-ready MP4, thumbnail &amp; metadata.</p>
+  <div class="chips">
+    <span class="chip {{ 'ok' if status.claude else 'warn' }}">Script: {{ 'Claude (' ~ status.model ~ ')' if status.claude else 'offline templates – set ANTHROPIC_API_KEY' }}</span>
+    <span class="chip ok">Voice: {{ status.tts|join(' → ') }}</span>
+    <span class="chip {{ 'ok' if status.pexels or status.pixabay else '' }}">Stock: {{ 'Pexels ' if status.pexels }}{{ 'Pixabay' if status.pixabay }}{{ 'none (AI images + generated art)' if not (status.pexels or status.pixabay) }}</span>
+  </div>
+</section>
+
+<form class="card grid" method="post" action="{{ url_for('generate') }}">
+  <div class="col-2">
+    <label>Topic</label>
+    <div class="row">
+      <input name="topic" id="topic" placeholder="e.g. The lighthouse keeper who never left" autofocus>
+      <button type="button" class="ghost" id="ideas-btn" title="Get topic ideas from Claude">✨ Ideas</button>
+    </div>
+    <div id="ideas" class="ideas"></div>
+  </div>
+
+  <div>
+    <label>Niche / channel template</label>
+    <select name="niche" id="niche">
+      {% for k, n in niches.items() %}<option value="{{ k }}">{{ n.label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Format</label>
+    <select name="format" id="format">
+      {% for k, f in formats.items() %}<option value="{{ k }}">{{ f.label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Length (seconds, 0 = default)</label>
+    <input name="duration" type="number" min="0" max="1800" value="0">
+  </div>
+  <div>
+    <label>Voice</label>
+    <select name="voice">
+      <option value="">Niche default</option>
+      {% for k, v in voices.items() %}<option value="{{ k }}">{{ v.label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Language</label>
+    <select name="language" id="language">
+      <option value="">Same as voice</option>
+      {% for k, l in languages.items() %}<option value="{{ k }}">{{ l }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Art style</label>
+    <select name="art_style">
+      <option value="">Niche default</option>
+      {% for k, s in art_styles.items() %}<option value="{{ k }}">{{ s.label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Captions</label>
+    <select name="caption_style">
+      <option value="">Niche default</option>
+      {% for k, s in caption_styles.items() %}<option value="{{ k }}">{{ s.label }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label>Visuals</label>
+    <select name="visual_source">
+      <option value="">Auto</option>
+      <option value="ai">AI images (art style)</option>
+      <option value="stock">Stock footage (Pexels / Pixabay)</option>
+      <option value="local">My media folder</option>
+      <option value="procedural">Generated art (offline)</option>
+    </select>
+  </div>
+  <div>
+    <label>Background music</label>
+    <select name="music"><option value="on">On (ducked under voice)</option><option value="off">Off</option></select>
+  </div>
+
+  <details class="col-2">
+    <summary>Advanced: batch topics &amp; your own script</summary>
+    <label>Batch – one topic per line (each becomes its own video)</label>
+    <textarea name="topics" rows="5" placeholder="Topic 1&#10;Topic 2&#10;Topic 3"></textarea>
+    <label>Own narration (optional – used verbatim, Claude only splits it into scenes)</label>
+    <textarea name="custom_script" rows="5"></textarea>
+    <label>Variation seed</label>
+    <input name="seed" type="number" value="0">
+  </details>
+
+  <div class="col-2 actions"><button class="primary" type="submit">Generate video</button></div>
+</form>
+
+{% if active %}
+<section><h2>In progress</h2><a href="{{ url_for('jobs_page') }}">{{ active|length }} job(s) running – open queue →</a></section>
+{% endif %}
+
+{% if recent %}
+<section>
+  <h2>Recent videos</h2>
+  <div class="cards">
+    {% for v in recent %}{% include "_card.html" %}{% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+const btn = document.getElementById('ideas-btn'), box = document.getElementById('ideas');
+btn.onclick = async () => {
+  btn.disabled = true; box.textContent = 'Thinking…';
+  const r = await fetch('/api/ideas', {method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({niche: document.getElementById('niche').value,
+                          language: document.getElementById('language').value || 'en', count: 10})});
+  const d = await r.json(); box.innerHTML = '';
+  (d.topics || [d.error]).forEach(t => {
+    const a = document.createElement('button'); a.type = 'button'; a.className = 'idea'; a.textContent = t;
+    a.onclick = () => document.getElementById('topic').value = t; box.appendChild(a);
+  });
+  btn.disabled = false;
+};
+</script>
+{% endblock %}

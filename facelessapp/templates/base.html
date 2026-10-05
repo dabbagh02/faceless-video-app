@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Faceless Studio{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="{{ url_for('index') }}"><span class="dot"></span>Faceless Studio</a>
+  <nav>
+    <a href="{{ url_for('index') }}" class="{{ 'on' if request.endpoint == 'index' }}">Create</a>
+    <a href="{{ url_for('jobs_page') }}" class="{{ 'on' if request.endpoint == 'jobs_page' }}">Queue</a>
+    <a href="{{ url_for('library_page') }}" class="{{ 'on' if request.endpoint == 'library_page' }}">Library</a>
+  </nav>
+</header>
+<main>{% block body %}{% endblock %}</main>
+{% block scripts %}{% endblock %}
+</body>
+</html>

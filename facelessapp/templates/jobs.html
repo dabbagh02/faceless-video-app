@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Queue – Faceless Studio{% endblock %}
+{% block body %}
+<h1>Queue</h1>
+{% if not jobs %}<p class="muted">No jobs yet. <a href="{{ url_for('index') }}">Create a video →</a></p>{% endif %}
+<table class="jobs" id="jobs">
+  <thead><tr><th>Topic</th><th>Format</th><th>Status</th><th>Progress</th><th></th></tr></thead>
+  <tbody>
+  {% for j in jobs %}
+    <tr data-id="{{ j.id }}">
+      <td dir="auto">{{ j.request.topic }}</td>
+      <td>{{ j.request.format }}</td>
+      <td class="st {{ j.status }}">{{ j.status }}{% if j.status == 'running' %} – {{ j.stage }}{% endif %}</td>
+      <td><div class="bar"><i style="width: {{ (j.progress * 100)|round }}%"></i></div></td>
+      <td>{% if j.status == 'done' %}<a href="{{ url_for('video_page', item_id=j.output) }}">Open</a>
+          {% elif j.status == 'failed' %}<details><summary>Error</summary><pre>{{ j.error }}</pre></details>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block scripts %}
+<script>
+async function poll() {
+  const jobs = await (await fetch('/api/jobs')).json();
+  let active = false;
+  for (const j of jobs) {
+    const row = document.querySelector(`tr[data-id="${j.id}"]`);
+    if (!row) continue;
+    if (j.status === 'queued' || j.status === 'running') active = true;
+    const st = row.querySelector('.st');
+    st.className = 'st ' + j.status;
+    st.textContent = j.status + (j.status === 'running' ? ' – ' + j.stage : '');
+    row.querySelector('.bar i').style.width = Math.round(j.progress * 100) + '%';
+    if (j.status === 'done' && !row.querySelector('a')) row.lastElementChild.innerHTML = `<a href="/video/${j.output}">Open</a>`;
+    if (j.status === 'failed' && !row.querySelector('details')) location.reload();
+  }
+  if (active) setTimeout(poll, 2000);
+}
+poll();
+</script>
+{% endblock %}
