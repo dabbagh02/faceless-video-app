@@ -58,7 +58,7 @@ def build_description(script: Script, chapters: list[tuple[float, str]]) -> str:
 
 
 def _fit_duration(scenes, max_seconds: float, gap: float, lead: float, tail: float) -> None:
-    """Speed narration up slightly (max 15%) and, if still too long, drop middle scenes."""
+    """Speed narration up slightly (max 20%) and, if still too long, drop middle scenes."""
     def total():
         return lead + sum(tts.audio_duration(s.audio_path) for s in scenes) + gap * (len(scenes) - 1) + tail
 
@@ -66,7 +66,7 @@ def _fit_duration(scenes, max_seconds: float, gap: float, lead: float, tail: flo
     if t <= max_seconds:
         return
     speech = t - lead - tail - gap * (len(scenes) - 1)
-    tempo = min(1.15, speech / max(1.0, (max_seconds - lead - tail - gap * (len(scenes) - 1))) + 0.01)
+    tempo = min(1.2, speech / max(1.0, (max_seconds - lead - tail - gap * (len(scenes) - 1))) + 0.01)
     for s in scenes:
         src = Path(s.audio_path)
         tmp = src.with_suffix(".tmp.wav")

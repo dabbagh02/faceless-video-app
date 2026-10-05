@@ -115,3 +115,12 @@ def test_claude_writer_retries_without_fallbacks_on_400(settings):
     client = SimpleNamespace(messages=good.messages, beta=SimpleNamespace(messages=SimpleNamespace(stream=beta_stream)))
     s = ClaudeScriptWriter(settings, client=client).write(VideoRequest(topic="x"))
     assert len(s.scenes) == 5 and "fallbacks" not in calls[0]
+
+
+def test_offline_writer_handles_very_long_topics():
+    topic = ("The extraordinarily long and winding title about the incredibly detailed history of the tiny "
+             "village that accidentally changed the course of European trade routes forever")
+    req = VideoRequest(topic=topic, niche="mythology", format="short", duration=15)
+    s = OfflineScriptWriter().write(req)
+    target, _ = target_words(req, "en")
+    assert len(s.full_text.split()) <= target * 1.4

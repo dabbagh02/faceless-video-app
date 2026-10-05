@@ -286,7 +286,10 @@ class OfflineScriptWriter:
         total_words, n_scenes = target_words(req, language)
         bank = _AR_BANK if language == "ar" else _EN_BANK
         t = req.topic.strip().rstrip(".?!")
-        fill = lambda s: s.replace("{t}", t if language == "ar" else t.lower()).replace("{T}", t)
+        # very long titles would eat the whole time budget when repeated in hook + outro
+        words_t = t.split()
+        short_t = t if len(words_t) <= 8 else " ".join(words_t[:6])
+        fill = lambda s: s.replace("{t}", short_t if language == "ar" else short_t.lower()).replace("{T}", short_t)
 
         if req.custom_script.strip():
             sentences = re.split(r"(?<=[.!?؟])\s+", req.custom_script.strip())
