@@ -50,3 +50,4 @@ pre { white-space: pre-wrap; word-break: break-word; font: 13px/1.5 ui-monospace
 .kv { width: 100%; border-collapse: collapse; font-size: 14px; } .kv td { padding: 5px 0; border-bottom: 1px solid var(--line); } .kv td:first-child { color: var(--muted); width: 110px; }
 .script li { margin-bottom: 10px; }
 .detail.vertical .player video { aspect-ratio: 9 / 16; object-fit: contain; max-height: 80vh; }
+@media (max-width: 520px) { .top { padding: 12px 16px; } nav a { margin-left: 12px; } .brand { font-size: 14px; } }
